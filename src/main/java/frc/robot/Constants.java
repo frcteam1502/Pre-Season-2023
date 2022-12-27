@@ -1,13 +1,153 @@
 package frc.robot;
 
+import java.util.Map;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.util.Units;
+import frc.robot.utils.ModuleMap;
 
 public final class Constants {
 
+    public static final class CanConstants {
+        //FRONT LEFT MODULE
+        public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 5; //FIXME: CAN ID of front left drive motor
+        public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 9; //FIXME: CAN ID of front left steer motor
+        public static final int FRONT_LEFT_MODULE_STEER_CANCODER = 1; //FIXME: CAN ID of front left CANCoder
+        public static final double FRONT_LEFT_MODULE_STEER_OFFSET = 313.09; //FIXME: reading of front left CANCoder (in degrees) after manually setting wheel to forward (axle bolt head to the right side of the robot)
+    
+        //FRONT RIGHT MODULE
+        public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 6; //FIXME: CAN ID of front right drive motor
+        public static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 10; //FIXME: CAN ID of front right steer motor
+        public static final int FRONT_RIGHT_MODULE_STEER_CANCODER = 2; //FIXME: CAN ID of front right CANCoder
+        public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = 292.27; //FIXME: reading of front right CANCoder (in degrees) after manually setting wheel to forward (axle bolt head to the right side of the robot)
+    
+        //BACK LEFT MODULE
+        public static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 7; //FIXME: CAN ID of back left drive motor
+        public static final int BACK_LEFT_MODULE_STEER_MOTOR = 11; //FIXME: CAN ID of back left steer motor
+        public static final int BACK_LEFT_MODULE_STEER_CANCODER = 3; //FIXME: CAN ID of back left CANCoder
+        public static final double BACK_LEFT_MODULE_STEER_OFFSET = 228.79; //FIXME: reading of back left CANCoder (in degrees) after manually setting wheel to forward (axle bolt head to the right side of the robot)
+    
+        //BACK RIGHT MODULE
+        public static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 8; //FIXME: CAN ID of back right drive motor
+        public static final int BACK_RIGHT_MODULE_STEER_MOTOR = 12; //FIXME: CAN ID of back right steer motor
+        public static final int BACK_RIGHT_MODULE_STEER_CANCODER = 4; //FIXME: CAN ID of back right CANCoder
+        public static final double BACK_RIGHT_MODULE_STEER_OFFSET = 104.48; //FIXME: reading of back right CANCoder (in degrees) after manually setting wheel to forward (axle bolt head to the right side of the robot)
+    
+      }
+    
+      public static final class DriveConstants {
+    
+        public static final boolean kFrontLeftTurningMotorReversed = true;
+        public static final boolean kBackLeftTurningMotorReversed = true;
+        public static final boolean kFrontRightTurningMotorReversed = true;
+        public static final boolean kBackRightTurningMotorReversed = true;
+    
+        public static final boolean kFrontLeftDriveMotorReversed = true;
+        public static final boolean kBackLeftDriveMotorReversed = true;
+        public static final boolean kFrontRightDriveMotorReversed = true;
+        public static final boolean kBackRightDriveMotorReversed = true;
+    
+        public enum ModulePosition {
+          FRONT_LEFT,
+          FRONT_RIGHT,
+          BACK_LEFT,
+          BACK_RIGHT
+        }
+
+        //Wheel Base
+        public static final double wheelBaseWidth = Units.inchesToMeters(29.5); //FIXME: Change actual values
+        public static final double wheelBaseLength = Units.inchesToMeters(29.5); //FIXME: Change actual values
+    
+        public static final Map<ModulePosition, Translation2d> ModuleTranslations = Map.of(
+            ModulePosition.FRONT_LEFT, new Translation2d(wheelBaseLength/2, wheelBaseWidth/2),
+            ModulePosition.FRONT_RIGHT, new Translation2d(wheelBaseLength/2, -wheelBaseWidth/2),
+            ModulePosition.BACK_LEFT, new Translation2d(-wheelBaseLength/2, wheelBaseWidth/2),
+            ModulePosition.BACK_RIGHT, new Translation2d(-wheelBaseLength/2, -wheelBaseWidth/2));
+    
+        public static final SwerveDriveKinematics swerveDriveKinematics = new SwerveDriveKinematics(
+            ModuleMap.orderedValues(ModuleTranslations, new Translation2d[0]));
+    
+        public static final boolean kGyroReversed = true;
+    
+        //FIXME: fix values with a finished robot
+    
+        public static final double ksVolts = 1;
+        public static final double kvVoltSecondsPerMeter = 0.8;
+        public static final double kaVoltSecondsSquaredPerMeter = 0.15;
+    
+        public static final double kMaxSpeedMetersPerSecond = 5;
+    
+        public static final double kMaxRotationRadiansPerSecond = Math.PI * 2;
+        public static final double kMaxRotationRadiansPerSecondSquared = Math.PI;
+    
+        public static final double kP_X = 0.2;
+        public static final double kD_X = 0;
+        public static final double kP_Y = 0.2;
+        public static final double kD_Y = 0;
+        public static final double kP_Theta = 8;
+        public static final double kD_Theta = 0;
+        public static double kTranslationSlew = 1.55;
+        public static double kRotationSlew = 3.00;
+        public static double kControllerDeadband = .05;
+        public static double kControllerRotDeadband = .1;
+        public static double kVoltCompensation = 12.6;
+      }
+    
+      public static final class ModuleConstants {
+    
+        public static final double kWheelDiameterMeters = Units.inchesToMeters(4); //FIXME: Get inches of wheels
+    
+        public static double driveGearRatio = 1 / ((14.0 / 50.0) * (27.0 / 17.0) * (15.0 / 45.0)); //FIXME: This drive gear ratio is for the L2 configuration. If you're using L1 or L3, the gear ratios can be obtained from the chart at https://www.swervedrivespecialties.com/products/mk4i-swerve-module.
+    
+        public static double steerGearRatio = 1 / ((14.0 / 50.0) * (10.0 / 60.0)); //FIXME: Maybe. I'm not sure yet. Consult the builders
+    
+        public static final double kDriveMetersPerEncRev = (kWheelDiameterMeters * Math.PI) / driveGearRatio;
+    
+        public static final double kDriveEncRPMperMPS = kDriveMetersPerEncRev / 60;
+    
+        public static double kEncoderRevsPerMeter = 1 / kDriveMetersPerEncRev;
+    
+        public static double kFreeMetersPerSecond = 5600 * kDriveEncRPMperMPS;
+      
+        public static final double kTurningDegreesPerEncRev = 360 / steerGearRatio;
+    
+        // max turn speed = (5400/ 21.43) revs per min 240 revs per min 4250 deg per min
+        public static final double kPModuleTurningController = .025;
+    
+        public static final double kPModuleDriveController = .2;
+    
+        //FIXME: use sysid on robot
+        public static double ksVolts = .055;
+        public static double kvVoltSecondsPerMeter = .2;
+        public static double kaVoltSecondsSquaredPerMeter = .02;
+    
+        public static double kPModuleTurnController; //FIXME: ???
+    
+        public static double kSMmaxAccel = 90;//deg per sec per sec
+    
+        public static double maxVel= 90; // deg per sec
+    
+        public static double allowedErr = .05;//deg
+    
+        // sysid on module?
+        public static final double ksDriveVoltSecondsPerMeter = 0.667 / 12;
+        public static final double kvDriveVoltSecondsSquaredPerMeter = 2.44 / 12;
+        public static final double kaDriveVoltSecondsSquaredPerMeter = 0.27 / 12;
+        // sysid on module?
+        public static final double kvTurnVoltSecondsPerRadian = 1.47; // originally 1.5
+        public static final double kaTurnVoltSecondsSquaredPerRadian = 0.348; // originally 0.3
+    
+        
+        public static double kMaxModuleAngularSpeedDegPerSec = 90;
+    
+        public static final double kMaxModuleAngularAccelerationDegreesPerSecondSquared = 90;
+    
+      }
+      
     public static final class Motors {
         //drive
         public static final CANSparkMax DRIVE_FRONT_LEFT = new CANSparkMax(0, MotorType.kBrushless);
@@ -20,22 +160,5 @@ public final class Constants {
         public static final CANSparkMax ANGLE_FRONT_RIGHT = new CANSparkMax(5, MotorType.kBrushless);
         public static final CANSparkMax ANGLE_BACK_LEFT = new CANSparkMax(6, MotorType.kBrushless);
         public static final CANSparkMax ANGLE_BACK_RIGHT = new CANSparkMax(7, MotorType.kBrushless);
-    }
-
-    public static final class DriveConstants {
-
-        //Wheel Base
-        // TODO: Change actual
-        public static final double wheelBaseWidth = 5.0;
-        public static final double wheelBaseLength = 5.0;
-
-        public static final Translation2d FrontLPosition = new Translation2d(wheelBaseLength/2, wheelBaseWidth/2);
-        public static final Translation2d FrontRPosition = new Translation2d(wheelBaseLength/2, -wheelBaseWidth/2);
-        public static final Translation2d BackLPosition = new Translation2d(-wheelBaseLength/2, wheelBaseWidth/2);
-        public static final Translation2d BackRPosition = new Translation2d(-wheelBaseLength/2, -wheelBaseWidth/2);
-
-        public static final SwerveDriveKinematics swerveDriveKinematics = new SwerveDriveKinematics(
-            FrontRPosition, FrontLPosition, BackRPosition, BackLPosition);
-
     }
 }
