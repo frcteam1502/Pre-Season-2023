@@ -68,7 +68,6 @@ public class SwerveModuleSparkMax extends SubsystemBase {
   public boolean driveMotorConnected;
   public boolean turnMotorConnected;
   public boolean turnCoderConnected;
-  private boolean useRRPid = true;
   private double turnDeadband = .5;
 
   /**
@@ -197,55 +196,26 @@ public class SwerveModuleSparkMax extends SubsystemBase {
 
     state = AngleUtils.optimize(desiredState, getHeadingRotation2d());
 
-    // state = SwerveModuleState.optimize(desiredState, new
-    // Rotation2d(actualAngleDegrees));
-
     // turn motor code
     // Prevent rotating module if speed is less then 1%. Prevents Jittering.
-    angle = (Math.abs(state.speedMetersPerSecond) <= (DriveConstants.kMaxSpeedMetersPerSecond * 0.01))
-
-        ? m_lastAngle
-
-        : state.angle.getDegrees();
+    angle = (Math.abs(state.speedMetersPerSecond) <= (DriveConstants.kMaxSpeedMetersPerSecond * 0.01)) ? m_lastAngle : state.angle.getDegrees();
 
     m_lastAngle = angle;
 
     if (RobotBase.isReal()) {
 
       // turn axis
-
       actualAngleDegrees = turnEncoder.getPosition();
-
-      if (useRRPid) {
-
-        positionTurn(angle);
-      }
-
-      else {
-
-        positionSMTurn(angle);
-      }
+      positionTurn(angle);
 
       // drive axis
-
-      if (isOpenLoop)
-
-        driveMotor.set(state.speedMetersPerSecond / ModuleConstants.kFreeMetersPerSecond);
-
-      else {
-
-        drivePIDController.setReference(state.speedMetersPerSecond, ControlType.kVelocity, VEL_SLOT);
-
-      }
+      driveMotor.set(state.speedMetersPerSecond / ModuleConstants.kFreeMetersPerSecond);
     }
 
     if (RobotBase.isSimulation()) {
-
       drivePIDController.setReference(state.speedMetersPerSecond, ControlType.kVelocity, SIM_SLOT);
-
       // no simulation for angle - angle command is returned directly to drive
       // subsystem as actual angle in 2 places - getState() and getHeading
-
       simTurnPosition(angle);
     }
 
@@ -263,15 +233,8 @@ public class SwerveModuleSparkMax extends SubsystemBase {
   }
 
   public double getHeadingDegrees() {
-
-    if (RobotBase.isReal())
-
-      return turnEncoder.getPosition();
-
-    else
-
-      return actualAngleDegrees;
-
+    if (RobotBase.isReal()) return turnEncoder.getPosition();
+    else return actualAngleDegrees;
   }
 
   public Rotation2d getHeadingRotation2d() {
@@ -283,17 +246,13 @@ public class SwerveModuleSparkMax extends SubsystemBase {
   }
 
   public void setDriveBrakeMode(boolean on) {
-    if (on)
-      driveMotor.setIdleMode(IdleMode.kBrake);
-    else
-      driveMotor.setIdleMode(IdleMode.kCoast);
+    if (on) driveMotor.setIdleMode(IdleMode.kBrake);
+    else driveMotor.setIdleMode(IdleMode.kCoast);
   }
 
   public void setTurnBrakeMode(boolean on) {
-    if (on)
-      turnMotor.setIdleMode(IdleMode.kBrake);
-    else
-      turnMotor.setIdleMode(IdleMode.kCoast);
+    if (on) turnMotor.setIdleMode(IdleMode.kBrake);
+    else turnMotor.setIdleMode(IdleMode.kCoast);
   }
 
   public void zeroModule() {

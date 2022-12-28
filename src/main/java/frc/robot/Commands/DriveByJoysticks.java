@@ -1,31 +1,47 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.Commands;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DriveTrain;
 
 public class DriveByJoysticks extends CommandBase {
-  /** Creates a new DriveByJoysticks. */
-  public DriveByJoysticks(DriveTrain drive) {
+  private final DriveTrain drive;
+  private final SlewRateLimiter slewX = new SlewRateLimiter(DriveConstants.kTranslationSlew);
+  private final SlewRateLimiter slewY = new SlewRateLimiter(DriveConstants.kTranslationSlew);
+  private final SlewRateLimiter slewRot = new SlewRateLimiter(DriveConstants.kRotationSlew);
+  private final double throttle, strafe, rotation;
+  private final boolean lockWheels;
+
+  public DriveByJoysticks(
+    DriveTrain drive, 
+    double throttle, 
+    double strafe, 
+    double rotation, 
+    boolean lockWheels ) 
+  {
+    this.drive = drive;
+    this.throttle = throttle;
+    this.strafe = strafe;
+    this.rotation = rotation;
+    this.lockWheels = lockWheels;
     addRequirements(drive);
   }
 
-  // Called when the command is initially scheduled.
   @Override
   public void initialize() {}
 
-  // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    double throttle = slewX.calculate(this.throttle);
+    double strafe = slewY.calculate(this.strafe);
+    double rotation = slewRot.calculate(this.rotation);
+    drive.drive(throttle, strafe, rotation, lockWheels, true);
+  }
 
-  // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {}
 
-  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     return false;
